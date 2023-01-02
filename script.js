@@ -2,7 +2,7 @@ let PICTURE = null;
 let CANVAS = null;
 let CONTEXT = null;
 let SCALER = 0.8; // about how much screen space will be used bt image
-// 10% of margin will be right and left from video
+// 10% of margin will be right and left from photo
 let SIZE = { x: 0, y: 0, width: 0, height: 0, rows: 3, columns: 3 };
 let PIECES = [];
 
@@ -68,13 +68,11 @@ class Piece {
     this.width = SIZE.width / SIZE.columns;
     this.height = SIZE.height / SIZE.rows;
     this.centerHeight = (this.height - this.y) / 2;
-    // debugger;
   }
 
   draw(context) {
     context.beginPath(); // function in canvas that gives a command to draw
     context.rect(this.x, this.y, this.width, this.height);
-    // debugger; ff4747,  d43937
     context.fillStyle = "#ff4747";
     context.font = "32px Comic Sans MS ";
     const coordinatesText = `Piece (${this.rowIndex}, ${this.colIndex})`;
