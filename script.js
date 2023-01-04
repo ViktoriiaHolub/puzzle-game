@@ -12,7 +12,8 @@ function main() {
   PICTURE = document.createElement("img");
   PICTURE.src = "./boat.jfif";
   handleResize();
-  window.addEventListener("resize", handleResize); // when screen size changes
+  // window.addEventListener("resize", handleResize); // when screen size changes
+  initializePieces(SIZE.rows, SIZE.columns);
   updateCanvas();
 }
 
@@ -39,22 +40,41 @@ function handleResize() {
 }
 
 function updateCanvas() {
+  CONTEXT.clearRect(0, 0, CANVAS.width, CANVAS.height);
+
+  CONTEXT.globalAlpha = 0.5;
   CONTEXT.drawImage(PICTURE, SIZE.x, SIZE.y, SIZE.width, SIZE.height);
+  CONTEXT.globalAlpha = 1; // how it works?
 
   for (let i = 0; i < PIECES.length; i++) {
     // PIECES.length - number of puzzles in general (3 , 3) = 9 pieces
     PIECES[i].draw(CONTEXT);
   }
-  initializePieces();
+
   window.requestAnimationFrame(updateCanvas); // for making video;
 }
 
-function initializePieces() {
+function initializePieces(rows, cols) {
+  SIZE.rows = rows;
+  SIZE.columns = cols;
   PIECES = [];
   for (let i = 0; i < SIZE.rows; i++) {
     for (let j = 0; j < SIZE.columns; j++) {
       PIECES.push(new Piece(i, j));
     }
+  }
+}
+
+function randomizePieces() {
+  for (let i = 0; i < PIECES.length; i++) {
+    // 9 pieces
+    let location = {
+      x: Math.random() * (CANVAS.width - PIECES[i].width),
+      y: Math.random() * (CANVAS.height - PIECES[i].height),
+    };
+    // any available value of width and height on the screen
+    PIECES[i].x = location.x;
+    PIECES[i].y = location.y;
   }
 }
 
@@ -72,12 +92,25 @@ class Piece {
 
   draw(context) {
     context.beginPath(); // function in canvas that gives a command to draw
+    context.drawImage(
+      PICTURE,
+      (this.colIndex * PICTURE.width) / SIZE.columns,
+      (this.rowIndex * PICTURE.height) / SIZE.rows,
+      PICTURE.width / SIZE.columns,
+      PICTURE.height / SIZE.rows,
+      this.x,
+      this.y,
+      this.width,
+      this.height
+    );
+    // console.log("posX", (this.colIndex * PICTURE.width) / SIZE.columns); // 0, 900, 1000
     context.rect(this.x, this.y, this.width, this.height);
-    context.fillStyle = "#ff4747";
-    context.font = "32px Comic Sans MS ";
-    const coordinatesText = `Piece (${this.rowIndex}, ${this.colIndex})`;
-    // 271
-    context.fillText(coordinatesText, this.x + 8, this.y + 142); // TODO: write location with formula
+
+    // for text in canvas of position
+    // context.fillStyle = "#ff4747";
+    // context.font = "32px Comic Sans MS ";
+    // const coordinatesText = `Piece (${this.rowIndex}, ${this.colIndex})`;
+    // context.fillText(coordinatesText, this.x + 8, this.y + 142); // TODO: write location with formula
     context.stroke(); // start to draw everything
   }
 }
